@@ -1,5 +1,5 @@
 {
-  "name": "@everzel/editorjs-persona-block-witch-select",
+  "name": "@everzel/poll",
   "version": "2.0.2",
   "description": "Persona Quote with Select tool for Editor.js",
   "scripts": {
