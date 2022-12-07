@@ -119,6 +119,8 @@ export default class PersonaQuote {
 
     const callbackSelect = (option) => {
       this.data.pollId = option.dataset.id;
+
+      window.dispatchEvent((new Event('changeTune')))
     };
 
     this.nodes.pollsSelect.addEventListener('change', function () {
