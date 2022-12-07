@@ -2,35 +2,13 @@ import ToolboxIcon from './svg/toolbox.svg';
 import './index.css';
 
 /**
- * @typedef {object} PersonalityConfig
- * @description Config supported by Tool
- * @property {string} endpoint - image file upload url
- * @property {string} field - field name for uploaded image
- * @property {string} types - available mime-types
- * @property {object} additionalRequestData - any data to send with requests
- * @property {object} additionalRequestHeaders - allows to pass custom headers with Request
- * @property {string} pollPlaceholder - placeholder for polls select
- * @property {string} selectPlaceholder - placeholder select
- */
-
-/**
- * @typedef {object} UploadResponseFormat
- * @description This format expected from backend on file uploading
- * @property {number} success - 1 for successful uploading, 0 for failure
- * @property {object} file - Object with file data.
- *                           'url' is required,
- *                           also can contain any additional data that will be saved and passed back
- * @property {string} file.url - [Required] image source URL
- */
-
-/**
  * Persona Quote Tool for the Editor.js
  */
 export default class PersonaQuote {
   /**
-   * @param {PersonalityToolData} data - Tool's data
-   * @param {PersonalityConfig} config - Tool's config
-   * @param {API} api - Editor.js API
+   * @param data
+   * @param config
+   * @param api
    */
   constructor({ data, config, api }) {
     this.api = api;
@@ -48,16 +26,11 @@ export default class PersonaQuote {
       selectPlaceholder: config.selectPlaceholder || 'Select'
     };
 
-    /**
-     * Set saved state
-     */
-    this.data = data;
+    this.data = Object.assign({}, data);
   }
 
   /**
-   * Get Tool toolbox settings
-   * icon - Tool icon's SVG
-   * title - title to show in toolbox
+   * @returns {{icon: *, title: string}}
    */
   static get toolbox() {
     return {
@@ -67,85 +40,38 @@ export default class PersonaQuote {
   }
 
   /**
-   * Empty Quote is not empty Block
-   *
-   * @public
-   * @returns {boolean}
-   */
-  static get contentless() {
-    return true;
-  }
-
-  /**
-   * Allow to press Enter inside the Quote
-   *
-   * @public
-   * @returns {boolean}
-   */
-  static get enableLineBreaks() {
-    return true;
-  }
-
-  /**
-   * Tool's CSS classes
+   * @returns {{input: any, pollsSelect: string, pollPlaceholder: string, baseClass: ScrollLogicalPosition, wrapper: string, fields: string, settingsWrapper: string, card: string}}
+   * @constructor
    */
   get CSS() {
     return {
       baseClass: this.api.styles.block,
       input: this.api.styles.input,
-      loader: this.api.styles.loader,
 
-      /**
-       * Tool's classes
-       */
       wrapper: 'cdx-persona-quote',
       card: 'cdx-persona-quote__card',
       fields: 'cdx-persona-quote__fields',
-      photo: 'cdx-persona-quote__photo',
-      name: 'cdx-persona-quote__name',
-      quote: 'cdx-persona-quote__quote',
-      position: 'cdx-persona-quote__position',
       pollPlaceholder: 'cdx-persona-personas__placeholder',
       pollsSelect: 'cdx-persona-personas__select',
 
-      settingsWrapper: 'cdx-persona-quote__settings',
-      settingsButton: this.api.styles.settingsButton,
-      settingsButtonActive: this.api.styles.settingsButtonActive
+      settingsWrapper: 'cdx-persona-quote__settings'
     };
   }
 
   /**
-   * Return Block data
-   * @param {HTMLElement} toolsContent
-   * @return {PersonalityToolData}
+   * @param toolsContent
+   * @returns {PersonalityToolData}
    */
   save(toolsContent) {
-    return Object.assign({}, {
-      pollId: undefined
-    }, this.data);
+    return this.data;
   }
 
   /**
-   * Sanitizer rules
-   */
-  static get sanitize() {
-    const defaultConfig = {
-      br: false,
-      b: false,
-      i: false,
-      a: false
-    };
-
-    return {
-      pollId: defaultConfig
-    };
-  }
-
-  /**
-   * Renders Block content
-   * @return {HTMLDivElement}
+   * @returns {null}
    */
   render() {
+    const { pollId } = this.data;
+
     this.nodes.wrapper = this.make('div', [this.CSS.baseClass, this.CSS.wrapper]);
 
     this.nodes.pollPlaceholder = this.make('div', this.CSS.pollPlaceholder, {
@@ -157,22 +83,36 @@ export default class PersonaQuote {
 
     this.nodes.pollsSelect = this.make('select', this.CSS.pollsSelect);
 
+    let selected = {};
+
+    if (!pollId) {
+      selected = {
+        selected: true
+      };
+    }
+
     this.nodes.pollsSelect.appendChild(
-      this.make('option', null, {
+      this.make('option', null, Object.assign({
         innerHTML: this.config.selectPlaceholder,
-        selected: this.data.pollId === undefined,
         hidden: true
-      })
+      }, selected))
     );
 
     this.config.polls.forEach((element) => {
+      let selectedOption = {};
+
+      if (element.id == pollId) {
+        selectedOption = {
+          selected: true
+        };
+      }
+
       const option = this.make('option', null, {
         innerHTML: element.name
-      }, {
+      }, Object.assign({
         value: element.id,
-        'data-id': element.id,
-        selected: element.id === this.data.pollId
-      });
+        'data-id': element.id
+      }, selectedOption));
 
       this.nodes.pollsSelect.appendChild(option);
     });
@@ -182,9 +122,7 @@ export default class PersonaQuote {
     };
 
     this.nodes.pollsSelect.addEventListener('change', function () {
-      const selectedOption = this.options[this.selectedIndex];
-
-      callbackSelect(selectedOption);
+      callbackSelect(this.options[this.selectedIndex]);
     });
 
     this.nodes.wrapper.appendChild(this.nodes.pollsSelect);
@@ -193,15 +131,11 @@ export default class PersonaQuote {
   }
 
   /**
-   * Validate saved data
-   * @param {PersonalityToolData} savedData - tool's data
-   * @returns {boolean} - validation result
+   * @param savedData
+   * @returns {boolean}
    */
   validate(savedData) {
-    /**
-     * Return false if fields are empty
-     */
-    return this.data.pollId !== undefined;
+    return true;
   }
 
   /**
