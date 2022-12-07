@@ -167,6 +167,7 @@ export default class PersonaQuote {
       const option = this.make('option', null, {
         innerHTML: element.name
       }, {
+        value: element.id,
         'data-id': element.id
       });
 
