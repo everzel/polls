@@ -158,7 +158,7 @@ export default class PersonaQuote {
     this.nodes.pollsSelect.appendChild(
       this.make('option', null, {
         innerHTML: this.config.selectPlaceholder,
-        selected: true,
+        selected: this.data.pollId === undefined,
         hidden: true
       })
     );
@@ -168,7 +168,8 @@ export default class PersonaQuote {
         innerHTML: element.name
       }, {
         value: element.id,
-        'data-id': element.id
+        'data-id': element.id,
+        selected: element.id === this.data.pollId
       });
 
       this.nodes.pollsSelect.appendChild(option);
@@ -176,6 +177,8 @@ export default class PersonaQuote {
 
     const callbackSelect = (option) => {
       this.data.pollId = option.dataset.id;
+
+      this.api.saver.save();
     };
 
     this.nodes.pollsSelect.addEventListener('change', function () {
