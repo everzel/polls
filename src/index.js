@@ -120,7 +120,9 @@ export default class PersonaQuote {
    * @return {PersonalityToolData}
    */
   save(toolsContent) {
-    return this.data;
+    return Object.assign({}, {
+      pollId: undefined
+    }, this.data);
   }
 
   /**
@@ -177,8 +179,6 @@ export default class PersonaQuote {
 
     const callbackSelect = (option) => {
       this.data.pollId = option.dataset.id;
-
-      this.api.saver.save();
     };
 
     this.nodes.pollsSelect.addEventListener('change', function () {
