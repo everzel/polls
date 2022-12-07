@@ -135,7 +135,7 @@ export default class PersonaQuote {
     };
 
     return {
-      id: defaultConfig
+      pollId: defaultConfig
     };
   }
 
