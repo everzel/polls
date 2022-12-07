@@ -135,11 +135,7 @@ export default class PersonaQuote {
     };
 
     return {
-      name: defaultConfig,
-      position: defaultConfig,
-      quote: Object.assign({}, defaultConfig, {
-        br: true
-      })
+      id: defaultConfig
     };
   }
 
@@ -201,7 +197,6 @@ export default class PersonaQuote {
     /**
      * Return false if fields are empty
      */
-    console.log();
     return this.data.pollId !== undefined;
   }
 
