@@ -9,7 +9,7 @@ import './index.css';
  * @property {string} types - available mime-types
  * @property {object} additionalRequestData - any data to send with requests
  * @property {object} additionalRequestHeaders - allows to pass custom headers with Request
- * @property {string} pollPlaceholder - placeholder for personas select
+ * @property {string} pollPlaceholder - placeholder for polls select
  * @property {string} selectPlaceholder - placeholder select
  */
 
@@ -44,7 +44,7 @@ export default class PersonaQuote {
 
     this.config = {
       pollPlaceholder: config.pollPlaceholder || 'Poll',
-      personas: config.personas || [],
+      polls: config.polls || [],
       selectPlaceholder: config.selectPlaceholder || 'Select'
     };
 
@@ -167,7 +167,7 @@ export default class PersonaQuote {
       })
     );
 
-    this.config.personas.forEach((element) => {
+    this.config.polls.forEach((element) => {
       const option = this.make('option', null, {
         innerHTML: element.name
       }, {
